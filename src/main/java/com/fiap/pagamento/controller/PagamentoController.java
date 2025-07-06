@@ -1,14 +1,10 @@
-package com.fiap.cliente.controller;
+package com.fiap.pagamento.controller;
 
-import com.fiap.cliente.dto.request.PagamentoRequestDTO;
-import com.fiap.cliente.dto.response.PagamentoResponseDTO;
-import com.fiap.cliente.mapper.PagamentoMapper;
-import com.fiap.cliente.usecase.ProcessarPagamentoUseCase;
+import com.fiap.pagamento.dto.request.PagamentoRequestDTO;
+import com.fiap.pagamento.dto.response.PagamentoResponseDTO;
+import com.fiap.pagamento.mapper.PagamentoMapper;
+import com.fiap.pagamento.usecase.service.ProcessarPagamentoSeviceUseCase;
 import lombok.var;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/pagamentos")
 public class PagamentoController {
 
-    private final ProcessarPagamentoUseCase processarPagamentoUseCase;
+    private final ProcessarPagamentoSeviceUseCase processarPagamentoUseCase;
     private final PagamentoMapper pagamentoMapper;
 
-    public PagamentoController(ProcessarPagamentoUseCase processarPagamentoUseCase, PagamentoMapper pagamentoMapper) {
+    public PagamentoController(ProcessarPagamentoSeviceUseCase processarPagamentoUseCase, PagamentoMapper pagamentoMapper) {
         this.processarPagamentoUseCase = processarPagamentoUseCase;
         this.pagamentoMapper = pagamentoMapper;
     }

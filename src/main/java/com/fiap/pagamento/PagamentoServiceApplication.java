@@ -1,4 +1,4 @@
-package com.fiap.cliente;
+package com.fiap.pagamento;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
