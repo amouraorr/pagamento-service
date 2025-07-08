@@ -4,7 +4,6 @@ import com.fiap.pagamento.dto.request.PagamentoRequestDTO;
 import com.fiap.pagamento.dto.response.PagamentoResponseDTO;
 import com.fiap.pagamento.mapper.PagamentoMapper;
 import com.fiap.pagamento.usecase.service.ProcessarPagamentoSeviceUseCase;
-import lombok.var;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
