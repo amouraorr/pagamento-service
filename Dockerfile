@@ -1,10 +1,10 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
-WORKDIR /build
-COPY . .
-RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /build/target/*.jar app.jar
+COPY . .
+RUN mvn package -pl pagamento-service -am -DskipTests
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/pagamento-service/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
