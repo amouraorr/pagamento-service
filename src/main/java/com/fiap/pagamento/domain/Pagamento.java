@@ -19,4 +19,4 @@ public class Pagamento {
         private Double valor;
         private String metodoPagamento;
         private String status;
-    }
+}

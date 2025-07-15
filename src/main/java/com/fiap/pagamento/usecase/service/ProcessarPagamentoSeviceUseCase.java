@@ -3,12 +3,15 @@ package com.fiap.pagamento.usecase.service;
 import com.fiap.pagamento.domain.Pagamento;
 import com.fiap.pagamento.gateway.EstoqueServiceClient;
 import com.fiap.pagamento.gateway.GatewayPagamentoPort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ProcessarPagamentoSeviceUseCase {
+
     private final GatewayPagamentoPort gatewayPagamentoPort;
     private final EstoqueServiceClient estoqueServiceClient;
 
@@ -18,25 +21,22 @@ public class ProcessarPagamentoSeviceUseCase {
     }
 
     public Pagamento processar(Pagamento pagamento) {
-        // Gerar ID e status do pagamento
         pagamento.setPagamentoId(UUID.randomUUID().toString());
         pagamento.setStatus("APROVADO");
 
-        // Integração futura com gateway externo de pagamento
+        log.info("Processando pagamento externo para pagamentoId={}", pagamento.getPagamentoId());
         // gatewayPagamentoPort.processarPagamentoExterno(pagamento);
 
-        // Comunicação REST com estoque-service para reservar estoque
         try {
+            log.info("Reservando estoque para pedidoId={} e valor={}", pagamento.getPedidoId(), pagamento.getValor());
             estoqueServiceClient.reservarEstoque(pagamento.getPedidoId(), pagamento.getValor());
+            log.info("Estoque reservado com sucesso para pedidoId={}", pagamento.getPedidoId());
         } catch (Exception e) {
-            // Em caso de erro, ajuste o status do pagamento
+            log.error("Erro ao reservar estoque para pedidoId={}: {}", pagamento.getPedidoId(), e.getMessage(), e);
             pagamento.setStatus("FALHA_ESTOQUE");
-            // Aqui pode-se lançar exceção ou tratar conforme a regra de negócio
+            // Opcional: lançar exceção customizada para ser tratada no controller advice
+            // throw new EstoqueException("Falha ao reservar estoque", e);
         }
-
-        // TODO: Adicionar integração com Kafka se necessário (producer/consumer)
-        // Exemplo de comentário para futura integração:
-        // kafkaTemplate.send("pagamento-processado", pagamento);
 
         return pagamento;
     }
