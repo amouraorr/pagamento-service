@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class Pagamento {
 
-        @Id
         private String pagamentoId;
         private String pedidoId;
         private Double valor;
