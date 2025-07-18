@@ -25,28 +25,28 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
 
     @Override
     public Pagamento processar(Pagamento pagamento) {
-        // Gerar ID e status do pagamento
         pagamento.setPagamentoId(UUID.randomUUID().toString());
-        pagamento.setStatus("APROVADO");
 
-        // Simula integração com gateway externo (mock)
-        gatewayPagamentoPort.processarPagamentoExterno(pagamento);
+        // Processa pagamento externo e obtém status real
+        String statusPagamento = gatewayPagamentoPort.processarPagamentoExterno(pagamento);
+        pagamento.setStatus(statusPagamento);
 
-        // Tenta reservar estoque via serviço externo
-        try {
-            estoqueServiceClient.reservarEstoque(pagamento.getPedidoId(), pagamento.getValor());
-            log.info("Estoque reservado com sucesso para pedidoId={}", pagamento.getPedidoId());
-        } catch (Exception e) {
-            log.error("Erro ao reservar estoque para pedidoId={}: {}", pagamento.getPedidoId(), e.getMessage(), e);
-            pagamento.setStatus("FALHA_ESTOQUE");
-            // Aqui pode lançar exceção ou tratar conforme regra de negócio
+        if ("RECUSADO".equalsIgnoreCase(statusPagamento)) {
+            log.warn("Pagamento recusado para pedidoId={}", pagamento.getPedidoId());
+            // Não tenta reservar estoque se pagamento recusado
+        } else {
+            try {
+                estoqueServiceClient.reservarEstoque(pagamento.getPedidoId(), pagamento.getValor());
+                log.info("Estoque reservado com sucesso para pedidoId={}", pagamento.getPedidoId());
+            } catch (Exception e) {
+                log.error("Erro ao reservar estoque para pedidoId={}: {}", pagamento.getPedidoId(), e.getMessage(), e);
+                pagamento.setStatus("FALHA_ESTOQUE");
+            }
         }
 
-        // Persiste pagamento no banco local
         PagamentoEntity entity = pagamentoMapper.toEntity(pagamento);
         PagamentoEntity salvo = pagamentoRepository.save(entity);
 
-        // Retorna domínio atualizado
         return pagamentoMapper.toDomain(salvo);
     }
 }

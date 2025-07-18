@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 public class GatewayPagamentoAdapter implements GatewayPagamentoPort {
 
     @Override
-    public void processarPagamentoExterno(Pagamento pagamento) {
+    public String processarPagamentoExterno(Pagamento pagamento) {
         // Implementação para processamento de pagamento externo
+        return null;
     }
 }
