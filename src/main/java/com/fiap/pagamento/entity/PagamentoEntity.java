@@ -2,6 +2,7 @@ package com.fiap.pagamento.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "pagamento")
@@ -13,7 +14,9 @@ import lombok.*;
 public class PagamentoEntity {
 
     @Id
-    @Column(name = "pagamento_id", nullable = false, updatable = false)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "pagamento_id", updatable = false, nullable = false)
     private String pagamentoId;
 
     @Column(name = "pedido_id", nullable = false)

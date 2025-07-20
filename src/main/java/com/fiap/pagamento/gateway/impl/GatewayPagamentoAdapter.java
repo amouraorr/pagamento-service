@@ -10,7 +10,12 @@ public class GatewayPagamentoAdapter implements GatewayPagamentoPort {
 
     @Override
     public String processarPagamentoExterno(Pagamento pagamento) {
-        // Implementação para processamento de pagamento externo
-        return null;
+        // Simula processamento externo
+        // Aqui você pode implementar lógica real ou simular aprovação/recusa
+        // Exemplo simples:
+        if (pagamento.getValor() > 1000) {
+            return "RECUSADO";
+        }
+        return "APROVADO";
     }
 }

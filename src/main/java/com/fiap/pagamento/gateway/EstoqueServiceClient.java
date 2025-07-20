@@ -12,4 +12,7 @@ public interface EstoqueServiceClient {
     // Endpoint conforme a API do estoque-service
     @PostMapping("/api/estoque/reservar")
     void reservarEstoque(@RequestParam String pedidoId, @RequestParam Double valor);
+
+    @PostMapping("/api/estoque/repor")
+    void reporEstoque(@RequestParam String pedidoId);
 }
