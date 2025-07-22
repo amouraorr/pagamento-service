@@ -2,16 +2,15 @@ package com.fiap.pagamento.usecase.service.impl;
 
 import com.fiap.pagamento.domain.Pagamento;
 import com.fiap.pagamento.entity.PagamentoEntity;
-import com.fiap.pagamento.mapper.PagamentoMapper;
-import com.fiap.pagamento.repository.PagamentoRepository;
 import com.fiap.pagamento.gateway.EstoqueServiceClient;
 import com.fiap.pagamento.gateway.GatewayPagamentoPort;
+import com.fiap.pagamento.mapper.PagamentoMapper;
+import com.fiap.pagamento.repository.PagamentoRepository;
 import com.fiap.pagamento.usecase.service.ProcessarPagamentoUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -24,15 +23,18 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
     private final PagamentoMapper pagamentoMapper;
 
     @Override
+    @Transactional
     public Pagamento processar(Pagamento pagamento) {
-        // 1. Define status inicial ABERTO e gera ID
+        // 1. Define status inicial ABERTO (NÃO gera pagamentoId manualmente)
         pagamento.setStatus("ABERTO");
-        pagamento.setPagamentoId(UUID.randomUUID().toString());
 
-        // Salva pagamento com status ABERTO
+        // Salva pagamento com status ABERTO (pagamentoId será gerado pelo JPA)
         PagamentoEntity entityAberto = pagamentoMapper.toEntity(pagamento);
-        pagamentoRepository.save(entityAberto);
+        PagamentoEntity entitySalvo = pagamentoRepository.save(entityAberto);
         log.info("Pagamento iniciado com status ABERTO para pedidoId={}", pagamento.getPedidoId());
+
+        // Atualiza o domínio com o pagamentoId gerado
+        pagamento.setPagamentoId(entitySalvo.getPagamentoId());
 
         // 2. Tenta reservar estoque (usando valor do pagamento)
         try {
@@ -71,6 +73,7 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
 
         // 5. Salva pagamento com status final
         PagamentoEntity entityFinal = pagamentoMapper.toEntity(pagamento);
+        entityFinal.setPagamentoId(pagamento.getPagamentoId());
         PagamentoEntity salvo = pagamentoRepository.save(entityFinal);
 
         log.info("Pagamento processado com status={} para pedidoId={}", pagamento.getStatus(), pagamento.getPedidoId());

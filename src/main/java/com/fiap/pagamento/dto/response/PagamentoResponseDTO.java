@@ -7,4 +7,5 @@ public class PagamentoResponseDTO {
 
     private String pagamentoId;
     private String status;
+    private String numeroCartao;
 }
