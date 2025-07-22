@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "pagamento")
+@Table(name = "pagamentos")
 @Getter
 @Setter
 @Builder
