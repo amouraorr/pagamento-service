@@ -1,8 +1,5 @@
 package com.fiap.pagamento.domain;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +14,5 @@ public class Pagamento {
         private Double valor;
         private String metodoPagamento;
         private String status;
+        private String numeroCartao;
 }

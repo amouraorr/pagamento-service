@@ -30,4 +30,7 @@ public class PagamentoEntity {
 
     @Column(nullable = false)
     private String status;
+
+    @Column(name = "numero_cartao")
+    private String numeroCartao;
 }

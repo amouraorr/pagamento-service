@@ -34,10 +34,10 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
         pagamentoRepository.save(entityAberto);
         log.info("Pagamento iniciado com status ABERTO para pedidoId={}", pagamento.getPedidoId());
 
-        // 2. Tenta reservar estoque
+        // 2. Tenta reservar estoque (usando valor do pagamento)
         try {
             estoqueServiceClient.reservarEstoque(pagamento.getPedidoId(), pagamento.getValor());
-            log.info("Estoque reservado com sucesso para pedidoId={}", pagamento.getPedidoId());
+            log.info("Estoque reservado com sucesso para pedidoId={}, valor={}", pagamento.getPedidoId(), pagamento.getValor());
         } catch (Exception e) {
             log.error("Falha ao reservar estoque para pedidoId={}: {}", pagamento.getPedidoId(), e.getMessage(), e);
             pagamento.setStatus("FECHADO_SEM_ESTOQUE");
