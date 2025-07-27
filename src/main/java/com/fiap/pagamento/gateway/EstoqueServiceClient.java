@@ -15,4 +15,9 @@ public interface EstoqueServiceClient {
 
     @PostMapping("/api/estoque/repor")
     void reporEstoque(@RequestParam String pedidoId);
+
+    @PostMapping("/api/estoque/baixa")
+    void baixarEstoque(@RequestParam("produtoId") String produtoId, @RequestParam("quantidade") Integer quantidade);
+
+
 }
