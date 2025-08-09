@@ -53,7 +53,6 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
 
         if ("RECUSADO".equalsIgnoreCase(statusPagamento)) {
             log.warn("Pagamento recusado para pedidoId={}", pagamento.getPedidoId());
-            // Repor estoque em caso de pagamento recusado
             try {
                 estoqueServiceClient.reporEstoque(pagamento.getPedidoId());
                 log.info("Estoque reposto para pedidoId={} após pagamento recusado", pagamento.getPedidoId());
