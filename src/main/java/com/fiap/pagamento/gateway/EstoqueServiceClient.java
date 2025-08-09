@@ -5,11 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-// FeignClient para comunicação REST com o estoque-service
 @FeignClient(name = "estoque-service", url = "${estoque.service.url}")
 public interface EstoqueServiceClient {
 
-    // Endpoint conforme a API do estoque-service
     @PostMapping("/api/estoque/reservar")
     void reservarEstoque(@RequestParam String pedidoId, @RequestParam Double valor);
 

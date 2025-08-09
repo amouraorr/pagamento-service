@@ -25,18 +25,14 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
     @Override
     @Transactional
     public Pagamento processar(Pagamento pagamento) {
-        // 1. Define status inicial ABERTO (NÃO gera pagamentoId manualmente)
         pagamento.setStatus("ABERTO");
 
-        // Salva pagamento com status ABERTO (pagamentoId será gerado pelo JPA)
         PagamentoEntity entityAberto = pagamentoMapper.toEntity(pagamento);
         PagamentoEntity entitySalvo = pagamentoRepository.save(entityAberto);
         log.info("Pagamento iniciado com status ABERTO para pedidoId={}", pagamento.getPedidoId());
 
-        // Atualiza o domínio com o pagamentoId gerado
         pagamento.setPagamentoId(entitySalvo.getPagamentoId());
 
-        // 2. Tenta reservar estoque (usando valor do pagamento)
         try {
             estoqueServiceClient.reservarEstoque(pagamento.getPedidoId(), pagamento.getValor());
             log.info("Estoque reservado com sucesso para pedidoId={}, valor={}", pagamento.getPedidoId(), pagamento.getValor());
@@ -47,7 +43,6 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
             return pagamento;
         }
 
-        // 3. Processa pagamento externo
         String statusPagamento;
         try {
             statusPagamento = gatewayPagamentoPort.processarPagamentoExterno(pagamento);
@@ -56,10 +51,8 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
             statusPagamento = "RECUSADO";
         }
 
-        // 4. Atualiza status conforme resultado do pagamento
         if ("RECUSADO".equalsIgnoreCase(statusPagamento)) {
             log.warn("Pagamento recusado para pedidoId={}", pagamento.getPedidoId());
-            // Repor estoque em caso de pagamento recusado
             try {
                 estoqueServiceClient.reporEstoque(pagamento.getPedidoId());
                 log.info("Estoque reposto para pedidoId={} após pagamento recusado", pagamento.getPedidoId());
@@ -71,7 +64,6 @@ public class ProcessarPagamentoUseCaseImpl implements ProcessarPagamentoUseCase 
             pagamento.setStatus("FECHADO_COM_SUCESSO");
         }
 
-        // 5. Salva pagamento com status final
         PagamentoEntity entityFinal = pagamentoMapper.toEntity(pagamento);
         entityFinal.setPagamentoId(pagamento.getPagamentoId());
         PagamentoEntity salvo = pagamentoRepository.save(entityFinal);
